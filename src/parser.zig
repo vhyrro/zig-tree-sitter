@@ -8,10 +8,11 @@ pub const ParserError = error{IncompatibleParserVersion};
 
 /// Parser struct, equivalent of `TSParser` struct.
 pub const Parser = struct {
+    /// `TSParser` struct instance
     parser: *const api.TSParser,
 
     /// Create a new parser.
-    pub fn new() Parser {
+    pub fn init() Parser {
         return api.ts_parser_new();
     }
 
@@ -21,7 +22,7 @@ pub const Parser = struct {
     }
 
     /// Delete the parser, freeing all of the memory that is used.
-    fn delete(self: Parser) void {
+    fn deinit(self: Parser) void {
         return api.ts_parser_delete(self.parser);
     }
 
