@@ -5,6 +5,7 @@ const symbol_api = @import("symbol.zig");
 
 /// Language struct, equivalent of `TSLanguage` struct.
 pub const Language = struct {
+    /// `TSLanguage` struct instance
     language: *const api.TSLanguage,
 
     /// Get the version number for this language. This version number is used to ensure
