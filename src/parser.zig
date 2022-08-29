@@ -20,7 +20,7 @@ pub const Parser = struct {
         return api.ts_parser_delete(self.parser);
     }
 
-    fn set_language(self: Parser, lang: language) !void {
+    fn set_language(self: Parser, lang: language.language) !void {
         var successful = api.ts_parser_set_language(self.parser, lang);
         if (!successful)
             return ParserError.IncompatibleParserVersion;
