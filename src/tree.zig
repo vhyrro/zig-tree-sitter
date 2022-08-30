@@ -1,7 +1,12 @@
 //! Wrapper around the TSTree structure
 
 const api = @import("api/out.zig");
-const language = @import("language.zig").Language;
+const Language = @import("language.zig").Language;
+
+pub const TreeError = error {
+    TreeNotFound,
+    TreeCopyFailed,
+};
 
 // TODO: add missing functions once we make a wrapper for their dependencies
 //
@@ -28,12 +33,16 @@ pub const Tree = struct {
     ///
     /// You need to copy a syntax tree in order to use it on more than one thread at
     /// a time, as syntax trees are not thread safe.
-    fn copy(self: Tree) Tree {
-        return api.ts_tree_copy(self.tree);
+    fn copy(self: Tree) TreeError.TreeCopyFailed!Tree {
+        return .{
+            .tree = api.ts_tree_copy(self.tree) orelse return TreeError.TreeCopyFailed,
+        };
     }
 
     /// Get the language that was used to parse the syntax tree.
-    fn get_language(self: Tree) Language.language {
-        return api.ts_tree_language(self.tree);
+    fn language(self: Tree) TreeError.TreeNotFound!Language {
+        return Language {
+            .language = api.ts_tree_language(self.tree) orelse return TreeError.TreeNotFound,
+        };
     }
 };
