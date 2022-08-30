@@ -1,7 +1,7 @@
 //! Wrapper around the TSLanguage structure.
 
 const api = @import("api/out.zig");
-const symbol_api = @import("symbol.zig");
+const Symbol = @import("symbol.zig").Symbol;
 
 /// Language struct, equivalent of `TSLanguage` struct.
 pub const Language = struct {
@@ -20,12 +20,12 @@ pub const Language = struct {
     }
 
     /// Get a node type string for the given numerical id.
-    fn symbol_name(self: Language, symbol: symbol_api.Symbol) []const u8 {
+    fn symbol_name(self: Language, symbol: Symbol) []const u8 {
         return api.ts_language_symbol_name(self.language, symbol.symbol);
     }
 
     /// Get the numerical id for the given node type string.
-    fn symbol_for_name(self: Language, str: []const u8, is_named: bool) symbol_api.Symbol {
-        return symbol_api.Symbol.init(api.ts_language_symbol_for_name(self.language, str, str.len, is_named));
+    fn symbol_for_name(self: Language, str: []const u8, is_named: bool) Symbol {
+        return Symbol.init(api.ts_language_symbol_for_name(self.language, str, str.len, is_named));
     }
 };
