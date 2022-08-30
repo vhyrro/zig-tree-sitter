@@ -3,9 +3,9 @@ const language = @import("language.zig");
 
 /// Symbols types enum
 pub const SymbolType = enum(c_uint) {
-    Regular = 0,
-    Anonymous = 1,
-    Auxiliary = 2,
+    Regular = api.TSSymbolTypeRegular,
+    Anonymous = api.TSSymbolTypeAnonymous,
+    Auxiliary = api.TSSymbolTypeAuxiliary,
 };
 
 /// Symbol struct, equivalent of `TSSymbol`
