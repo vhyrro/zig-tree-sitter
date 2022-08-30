@@ -28,4 +28,8 @@ pub const Language = struct {
     fn symbol_for_name(self: Language, str: []const u8, is_named: bool) Symbol {
         return Symbol.init(api.ts_language_symbol_for_name(self.language, str, str.len, is_named));
     }
+
+    fn field_count(self: Language) u32 {
+        return api.ts_language_field_count(self.language);
+    }
 };
