@@ -16,7 +16,13 @@ pub const Parser = struct {
         return api.ts_parser_new();
     }
 
-    /// 
+    /// Instruct the parser to start the next parse from the beginning.
+    ///
+    /// If the parser previously failed because of a timeout or a cancellation, then
+    /// by default, it will resume where it left off on the next call to
+    /// `Parser.arse` or other parsing functions. If you don't want to resume,
+    /// and instead intend to use this parser to parse some other document, you must
+    /// call `Parser.reset` first.
     fn reset(self: Parser) void {
         return api.ts_parser_reset(self.parser);
     }
