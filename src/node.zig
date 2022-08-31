@@ -4,6 +4,7 @@ const Language = @import("language.zig").Language;
 const Field = @import("field.zig").Field;
 
 pub const Point = api.TSPoint;
+pub const InputEdit = api.TSInputEdit;
 
 const Node = struct {
     node: *const TSNode,
@@ -180,5 +181,9 @@ const Node = struct {
 
     fn equal(self: Node, other: Node) bool {
         return api.ts_node_eq(self.node, other.node);
+    }
+
+    fn edit(self: Node, edits: [*]const TSInputEdit) void {
+        api.ts_node_edit(self.node, edits);
     }
 };
