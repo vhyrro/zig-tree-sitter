@@ -35,11 +35,10 @@ pub const Parser = struct {
     /// Set the language that the parser should use for parsing.
     ///
     /// Returns a `ParserError.IncompatibleParserVersion` error if the language
-    /// assignation failed due to a language generated with an incompatible
+    /// assignment failed due to a language generated with an incompatible
     /// version of the Tree-Sitter CLI.
     fn set_language(self: Parser, lang: language.language) !void {
-        var successful = api.ts_parser_set_language(self.parser, lang);
-        if (!successful)
+        if (!api.ts_parser_set_language(self.parser, lang))
             return ParserError.IncompatibleParserVersion;
     }
 
