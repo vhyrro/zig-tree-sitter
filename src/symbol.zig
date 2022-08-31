@@ -1,5 +1,5 @@
 const api = @import("api/out.zig");
-const language = @import("language.zig");
+const Language = @import("language.zig").Language;
 
 /// Symbols types enum
 pub const SymbolType = enum(c_uint) {
@@ -16,8 +16,8 @@ pub const Symbol = struct {
     type: SymbolType,
 
     /// Initialize a new Symbol
-    fn init(lang: language.Language, symbol: *const api.TSSymbol) Symbol {
-        return Symbol {
+    fn init(lang: Language, symbol: *const api.TSSymbol) Symbol {
+        return Symbol{
             .symbol = symbol,
             .type = SymbolType(api.ts_language_symbol_type(lang.language, symbol)),
         };

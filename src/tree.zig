@@ -3,7 +3,7 @@
 const api = @import("api/out.zig");
 const Language = @import("language.zig").Language;
 
-pub const TreeError = error {
+pub const TreeError = error{
     TreeNotFound,
     TreeCopyFailed,
 };
@@ -41,7 +41,7 @@ pub const Tree = struct {
 
     /// Get the language that was used to parse the syntax tree.
     fn language(self: Tree) TreeError.TreeNotFound!Language {
-        return Language {
+        return Language{
             .language = api.ts_tree_language(self.tree) orelse return TreeError.TreeNotFound,
         };
     }
