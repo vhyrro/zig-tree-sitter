@@ -1,19 +1,21 @@
 //! Wrapper around the TSParser structure.
 
 const api = @import("api/out.zig");
-const language = @import("language.zig").Language;
+const Language = @import("language.zig").Language;
 
 /// Tree-Sitter Parser errors.
-pub const ParserError = error{IncompatibleParserVersion};
+pub const ParserError = error{ParserInitializationFailure, IncompatibleParserVersion};
 
 /// Parser struct, equivalent of `TSParser` struct.
 pub const Parser = struct {
     /// `TSParser` struct instance
-    parser: *const api.TSParser,
+    parser: *api.TSParser,
 
     /// Create a new parser.
-    pub fn init() Parser {
-        return api.ts_parser_new();
+    pub fn init() ParserError!Parser {
+        return .{
+            .parser = api.ts_parser_new() orelse return ParserError.ParserInitializationFailure,
+        };
     }
 
     /// Instruct the parser to start the next parse from the beginning.
@@ -23,12 +25,12 @@ pub const Parser = struct {
     /// `Parser.arse` or other parsing functions. If you don't want to resume,
     /// and instead intend to use this parser to parse some other document, you must
     /// call `Parser.reset` first.
-    fn reset(self: Parser) void {
+    pub fn reset(self: Parser) void {
         return api.ts_parser_reset(self.parser);
     }
 
     /// Delete the parser, freeing all of the memory that is used.
-    fn deinit(self: Parser) void {
+    pub fn deinit(self: Parser) void {
         return api.ts_parser_delete(self.parser);
     }
 
@@ -37,13 +39,18 @@ pub const Parser = struct {
     /// Returns a `ParserError.IncompatibleParserVersion` error if the language
     /// assignment failed due to a language generated with an incompatible
     /// version of the Tree-Sitter CLI.
-    fn set_language(self: Parser, lang: language.language) !void {
-        if (!api.ts_parser_set_language(self.parser, lang))
+    pub fn set_language(self: Parser, lang: Language) !void {
+        if (!api.ts_parser_set_language(self.parser, lang.language))
             return ParserError.IncompatibleParserVersion;
     }
 
     /// Get the parser's current language.
-    fn get_language(self: Parser) language.language {
-        return api.ts_parser_language(self.parser);
+    pub fn get_language(self: Parser) ?Language {
+        if (api.ts_parser_language(self.parser)) |lang| {
+            return .{
+                .language = lang,
+            };
+        } else
+            return null;
     }
 };
