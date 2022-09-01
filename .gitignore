@@ -2,4 +2,4 @@
 zig-cache
 zig-out
 parser.o
-tree-sitter.o
+tree-sitter.a
