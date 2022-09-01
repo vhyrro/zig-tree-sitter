@@ -5,9 +5,3 @@ const testing = std.testing;
 
 const lang = @import("language.zig");
 const tree = @import("tree.zig");
-
-const Parser = struct {
-    pub fn init() Parser {}
-};
-
-pub fn main() void {}
