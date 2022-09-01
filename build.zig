@@ -10,8 +10,8 @@ pub fn build(b: *std.build.Builder) !void {
     const exe = b.addExecutable("json", "src/main.zig");
     exe.setBuildMode(mode);
     exe.linkLibC();
-    exe.addObjectFile("./tree-sitter.o");
-    exe.addObjectFile("./parser.o");
+    exe.addObjectFile("tree-sitter.a");
+    exe.addObjectFile("parser.o");
     exe.install();
 
     const run_cmd = exe.run();
