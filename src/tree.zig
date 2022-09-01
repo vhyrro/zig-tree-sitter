@@ -2,6 +2,7 @@
 
 const api = @import("api/out.zig");
 const Language = @import("language.zig").Language;
+const Node = @import("node.zig").Node;
 
 pub const TreeError = error{
     TreeNotFound,
@@ -43,5 +44,9 @@ pub const Tree = struct {
         return .{
             .tree = api.ts_tree_copy(self.tree) orelse return TreeError.TreeCopyFailed,
         };
+    }
+
+    pub fn root(self: Tree) Node {
+        return Node.from(api.ts_tree_root_node(self.tree));
     }
 };
