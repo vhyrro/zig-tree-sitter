@@ -22,10 +22,16 @@ pub const TreeError = error{
 /// Tree struct, equivalent of `TSTree`
 pub const Tree = struct {
     /// `TSTree` struct instance
-    tree: *const api.TSTree,
+    tree: *api.TSTree,
+
+    pub fn init(tree: *api.TSTree) Tree {
+        return .{
+            .tree = tree,
+        };
+    }
 
     /// Delete the syntax tree, freeing all of the memory that is used.
-    fn deinit(self: Tree) void {
+    pub fn deinit(self: Tree) void {
         api.ts_tree_delete(self.tree);
     }
 
@@ -33,16 +39,9 @@ pub const Tree = struct {
     ///
     /// You need to copy a syntax tree in order to use it on more than one thread at
     /// a time, as syntax trees are not thread safe.
-    fn copy(self: Tree) TreeError.TreeCopyFailed!Tree {
+    pub fn copy(self: Tree) TreeError!Tree {
         return .{
             .tree = api.ts_tree_copy(self.tree) orelse return TreeError.TreeCopyFailed,
-        };
-    }
-
-    /// Get the language that was used to parse the syntax tree.
-    fn language(self: Tree) TreeError.TreeNotFound!Language {
-        return Language{
-            .language = api.ts_tree_language(self.tree) orelse return TreeError.TreeNotFound,
         };
     }
 };
