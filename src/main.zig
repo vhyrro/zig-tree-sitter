@@ -1,11 +1,24 @@
-const std = @import("std");
-const api = @import("api/out.zig");
-const Language = @import("language.zig").Language;
-const Parser = @import("parser.zig").Parser;
+const LanguageFile = @import("language.zig");
+const Language = LanguageFile.Language;
+const TSLanguage = LanguageFile.TSLanguage;
 
-pub extern fn tree_sitter_json() *api.TSLanguage;
+const Parser = @import("parser.zig").Parser;
+const Tree = @import("tree.zig").Tree;
+
+extern fn tree_sitter_json() TSLanguage;
 
 pub fn main() !void {
-    const l = tree_sitter_json();
-    _ = api.ts_language_version(l);
+    const src =
+        \\ {
+        \\     "hello": "world!"
+        \\ }
+    ;
+
+    var language = Language.from(tree_sitter_json());
+
+    var parser = try Parser.init(language);
+    defer parser.deinit();
+
+    var tree: Tree = try parser.parse_string(src, null);
+    defer tree.deinit();
 }
