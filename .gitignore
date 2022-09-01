@@ -1,3 +1,5 @@
 # Zig cache and artifacts
 zig-cache
 zig-out
+parser.o
+tree-sitter.o
