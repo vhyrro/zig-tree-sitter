@@ -4,16 +4,24 @@ pub fn build(b: *std.build.Builder) !void {
     const mode = b.standardReleaseOptions();
     const lib = b.addStaticLibrary("zig-tree-sitter", "src/lib.zig");
     lib.setBuildMode(mode);
+    lib.linkLibC();
     lib.install();
 
-    const join = std.fs.path.join;
+    const exe = b.addExecutable("json", "src/main.zig");
+    exe.setBuildMode(mode);
+    exe.linkLibC();
+    exe.addObjectFile("./tree-sitter.o");
+    exe.addObjectFile("./parser.o");
+    exe.install();
 
-    const libpath = try join(b.allocator, &[_][]const u8{ "tree-sitter", "lib", "src", "lib.c" });
+    const run_cmd = exe.run();
+    run_cmd.step.dependOn(b.getInstallStep());
+    if (b.args) |args| {
+        run_cmd.addArgs(args);
+    }
 
-    lib.linkLibC();
-    lib.addCSourceFile(libpath, &[_][]const u8{});
-    lib.addIncludeDir(try join(b.allocator, &[_][]const u8{ "tree-sitter", "lib", "include" }));
-    lib.addIncludeDir(try join(b.allocator, &[_][]const u8{ "tree-sitter", "lib", "src" }));
+    const run_step = b.step("run", "Run the app");
+    run_step.dependOn(&run_cmd.step);
 
     var main_tests = b.addTest("tests/main.zig");
     main_tests.setBuildMode(mode);
