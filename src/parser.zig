@@ -2,27 +2,41 @@
 
 const api = @import("api/out.zig");
 const Language = @import("language.zig").Language;
+const Tree = @import("tree.zig").Tree;
 
 /// Tree-Sitter Parser errors.
-pub const ParserError = error{ParserInitializationFailure, IncompatibleParserVersion};
+pub const ParserError = error{ ParserInitializationFailure, IncompatibleParserVersion, ParseFailure };
 
 /// Parser struct, equivalent of `TSParser` struct.
 pub const Parser = struct {
     /// `TSParser` struct instance
     parser: *api.TSParser,
 
+    /// An internal reference to a language. Unlike regular treesitter APIs,
+    /// Zig TS bindings require that a Parser be bound to a language to minimize
+    /// the amount of error checking required.
+    language: Language,
+
     /// Create a new parser.
-    pub fn init() ParserError!Parser {
-        return .{
+    pub fn init(language: Language) ParserError!Parser {
+        var parser: Parser = .{
             .parser = api.ts_parser_new() orelse return ParserError.ParserInitializationFailure,
+            .language = language,
         };
+
+        if (api.ts_parser_set_language(parser.parser, language.language))
+            return parser
+        else {
+            parser.deinit();
+            return ParserError.IncompatibleParserVersion;
+        }
     }
 
     /// Instruct the parser to start the next parse from the beginning.
     ///
     /// If the parser previously failed because of a timeout or a cancellation, then
     /// by default, it will resume where it left off on the next call to
-    /// `Parser.arse` or other parsing functions. If you don't want to resume,
+    /// `Parser.parse` or other parsing functions. If you don't want to resume,
     /// and instead intend to use this parser to parse some other document, you must
     /// call `Parser.reset` first.
     pub fn reset(self: Parser) void {
@@ -34,23 +48,15 @@ pub const Parser = struct {
         return api.ts_parser_delete(self.parser);
     }
 
-    /// Set the language that the parser should use for parsing.
-    ///
-    /// Returns a `ParserError.IncompatibleParserVersion` error if the language
-    /// assignment failed due to a language generated with an incompatible
-    /// version of the Tree-Sitter CLI.
-    pub fn set_language(self: Parser, lang: Language) !void {
-        if (!api.ts_parser_set_language(self.parser, lang.language))
-            return ParserError.IncompatibleParserVersion;
+    /// Get the parser's current language.
+    pub fn get_language(self: Parser) Language {
+        // Thanks to the fact that there always must be a language
+        // attached to a parser we can safely use .? here.
+        return Language.from(api.ts_parser_language(self.parser).?);
     }
 
-    /// Get the parser's current language.
-    pub fn get_language(self: Parser) ?Language {
-        if (api.ts_parser_language(self.parser)) |lang| {
-            return .{
-                .language = lang,
-            };
-        } else
-            return null;
+    pub fn parse_string(self: Parser, content: []const u8, old_tree: ?Tree) ParserError!Tree {
+        var old_tree_ptr = if (old_tree) |_| old_tree.?.tree else null;
+        return Tree.init(api.ts_parser_parse_string(self.parser, old_tree_ptr, content.ptr, @truncate(u32, content.len)) orelse return ParserError.ParseFailure);
     }
 };
