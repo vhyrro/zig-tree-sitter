@@ -15,6 +15,15 @@ const testing = @import("std").testing;
 
 pub extern fn tree_sitter_json() lib.TSLanguage;
 
+pub const example_source =
+    \\ {
+    \\     "test": [
+    \\         2022,
+    \\         null
+    \\     ]
+    \\ }
+;
+
 pub fn get_language() lib.Language {
     return lib.Language.from(tree_sitter_json());
 }
