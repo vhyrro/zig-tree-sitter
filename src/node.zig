@@ -35,7 +35,7 @@ pub const Node = struct {
 
     // fn end_point() Point {}
 
-    pub fn content(self: Node) []const u8 {
+    pub fn sexp(self: Node) [*:0]const u8 {
         return api.ts_node_string(self.node.*);
     }
 
