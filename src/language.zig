@@ -10,7 +10,7 @@ pub const Language = struct {
     /// `TSLanguage` struct instance
     language: *api.TSLanguage,
 
-    pub fn from(language: *api.TSLanguage) Language {
+    pub fn from(language: TSLanguage) Language {
         return .{
             .language = language,
         };
