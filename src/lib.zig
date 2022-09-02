@@ -1,7 +1,7 @@
-const lib = @import("api/out.zig");
-
-const std = @import("std");
-const testing = std.testing;
-
-const lang = @import("language.zig");
-const tree = @import("tree.zig");
+pub usingnamespace @import("cursor.zig");
+pub usingnamespace @import("field.zig");
+pub usingnamespace @import("language.zig");
+pub usingnamespace @import("node.zig");
+pub usingnamespace @import("parser.zig");
+pub usingnamespace @import("symbol.zig");
+pub usingnamespace @import("tree.zig");
