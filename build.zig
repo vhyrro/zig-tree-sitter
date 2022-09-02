@@ -8,6 +8,7 @@ pub fn build(b: *std.build.Builder) !void {
     lib.install();
 
     const exe = b.addExecutable("json", "src/main.zig");
+    exe.use_stage1 = true;
     exe.setBuildMode(mode);
     exe.linkLibC();
     // TODO: Migrate this to `lib`, then make the exe link against the `lib`
