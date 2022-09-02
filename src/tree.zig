@@ -47,6 +47,6 @@ pub const Tree = struct {
     }
 
     pub fn root(self: Tree) Node {
-        return Node.from(api.ts_tree_root_node(self.tree));
+        return Node.from(&api.ts_tree_root_node(self.tree));
     }
 };
