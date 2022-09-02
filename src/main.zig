@@ -14,11 +14,13 @@ pub fn main() !void {
         \\ }
     ;
 
-    var language = Language.from(tree_sitter_json());
+    const language = Language.from(tree_sitter_json());
 
     var parser = try Parser.init(language);
     defer parser.deinit();
 
     var tree: Tree = try parser.parse_string(src, null);
     defer tree.deinit();
+
+    @import("std").debug.print("{s}", .{tree.root().sexp()});
 }
