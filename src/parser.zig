@@ -5,7 +5,10 @@ const Language = @import("language.zig").Language;
 const Tree = @import("tree.zig").Tree;
 
 /// Tree-Sitter Parser errors.
-pub const ParserError = error{ ParserInitializationFailure, IncompatibleParserVersion, ParseFailure };
+pub const ParserError = error{ ParserInitializationFailure, IncompatibleParserVersion };
+pub const ParseFailure = error{
+    Cancelled,
+};
 
 /// Parser struct, equivalent of `TSParser` struct.
 pub const Parser = struct {
@@ -55,8 +58,13 @@ pub const Parser = struct {
         return Language.from(api.ts_parser_language(self.parser).?);
     }
 
-    pub fn parse_string(self: Parser, content: []const u8, old_tree: ?Tree) ParserError!Tree {
-        var old_tree_ptr = if (old_tree) |_| old_tree.?.tree else null;
-        return Tree.init(api.ts_parser_parse_string(self.parser, old_tree_ptr, content.ptr, @truncate(u32, content.len)) orelse return ParserError.ParseFailure);
+    // pub fn parse(self: Parser, old_tree: ?Tree, input: api.TSInput) ParseFailure!Tree {
+    //     _ = old_tree;
+    //     return Tree.init(api.ts_parser_parse(self.parser, null, input) orelse return ParseFailure.Cancelled);
+    // }
+
+    pub fn parse_string(self: Parser, input: []const u8, old_tree: ?Tree) ParseFailure!Tree {
+        const old_tree_ptr = if (old_tree) |_| old_tree.?.tree else null;
+        return Tree.init(api.ts_parser_parse_string(self.parser, old_tree_ptr, input.ptr, @truncate(u32, input.len)) orelse return ParseFailure.Cancelled);
     }
 };
