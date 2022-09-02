@@ -10,8 +10,13 @@ pub fn build(b: *std.build.Builder) !void {
     const exe = b.addExecutable("json", "src/main.zig");
     exe.setBuildMode(mode);
     exe.linkLibC();
-    exe.addObjectFile("tree-sitter.a");
-    exe.addObjectFile("parser.o");
+    // TODO: Migrate this to `lib`, then make the exe link against the `lib`
+    exe.addIncludeDir("tree-sitter/lib/src");
+    exe.addIncludeDir("tree-sitter/lib/include/");
+    exe.addCSourceFile("tree-sitter/lib/src/lib.c", &[_][]const u8 {});
+
+    exe.addIncludeDir("tree-sitter-json/src/");
+    exe.addCSourceFile("tree-sitter-json/src/parser.c", &[_][]const u8 {});
     exe.install();
 
     const run_cmd = exe.run();
