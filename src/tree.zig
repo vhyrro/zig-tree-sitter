@@ -12,8 +12,6 @@ pub const TreeError = error{
 // TODO: add missing functions once we make a wrapper for their dependencies
 //
 //       Missing functions:
-//       - `ts_tree_root_node(self: ?*const TSTree) TSNode`
-//          Depends on: `TSNode`
 //       - `ts_tree_edit(self: ?*TSTree, edit: [*c]const TSInputEdit) void`
 //          Depends on: `TSinputEdit`
 //       - `ts_tree_get_changed_ranges(old_tree: ?*const TSTree, new_tree: ?*const TSTree, length: [*c]u32) [*c]TSRange`
