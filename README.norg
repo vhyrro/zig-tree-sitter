@@ -1,4 +1,8 @@
 * High Level Bindings for `tree-sitter`
   This repository hosts treesitter bindings for the Zig programming language.
-  Although it doesn't do anything right now, the goal is to have a nice intuitive interface for
-  creating parsers and managing them.
+
+  Although heavily work in progress, a lot of bindings are already functional - they are pretty low level
+  bindings, but it's already a big step up over using the C APIs.
+
+  A documentation set for how to link your own parser and for the APIs will be released after we're happy
+  with the state of the project, so hang tight :)
