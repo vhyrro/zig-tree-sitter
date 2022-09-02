@@ -10,6 +10,11 @@ pub const ParseFailure = error{
     Cancelled,
 };
 
+pub const Encoding = enum(u32) {
+    UTF8 = api.TSInputEncodingUTF8,
+    UTF16 = api.TSInputEncodingUTF16,
+};
+
 /// Parser struct, equivalent of `TSParser` struct.
 pub const Parser = struct {
     /// `TSParser` struct instance
@@ -58,13 +63,8 @@ pub const Parser = struct {
         return Language.from(api.ts_parser_language(self.parser).?);
     }
 
-    // pub fn parse(self: Parser, old_tree: ?Tree, input: api.TSInput) ParseFailure!Tree {
-    //     _ = old_tree;
-    //     return Tree.init(api.ts_parser_parse(self.parser, null, input) orelse return ParseFailure.Cancelled);
-    // }
-
-    pub fn parse_string(self: Parser, input: []const u8, old_tree: ?Tree) ParseFailure!Tree {
+    pub fn parse_string(self: Parser, input: []const u8, encoding: Encoding, old_tree: ?Tree) ParseFailure!Tree {
         const old_tree_ptr = if (old_tree) |_| old_tree.?.tree else null;
-        return Tree.init(api.ts_parser_parse_string(self.parser, old_tree_ptr, input.ptr, @truncate(u32, input.len)) orelse return ParseFailure.Cancelled);
+        return Tree.init(api.ts_parser_parse_string_encoding(self.parser, old_tree_ptr, input.ptr, @truncate(u32, input.len), @enumToInt(encoding)) orelse return ParseFailure.Cancelled);
     }
 };
