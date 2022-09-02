@@ -40,13 +40,13 @@ pub const Parser = struct {
         }
     }
 
-    test "Parser initialization" {
+    test "Parser initialization & deinitialization" {
         const tests = @import("tests.zig");
 
         const parser = try Parser.init(tests.get_language());
         defer parser.deinit();
     }
-    
+
     /// Instruct the parser to start the next parse from the beginning.
     ///
     /// If the parser previously failed because of a timeout or a cancellation, then
@@ -65,13 +65,35 @@ pub const Parser = struct {
 
     /// Get the parser's current language.
     pub fn get_language(self: Parser) Language {
-        // Thanks to the fact that there always must be a language
-        // attached to a parser we can safely use .? here.
-        return Language.from(api.ts_parser_language(self.parser).?);
+        return self.language;
+    }
+
+    test "Parser.get_language()" {
+        const testing = @import("std").testing;
+
+        const language = @import("tests.zig").get_language();
+
+        const parser = try Parser.init(language);
+        defer parser.deinit();
+
+        // Ensure both structures hold a pointer to the same TSLanguage struct
+        try testing.expectEqual(parser.get_language().language, language.language);
     }
 
     pub fn parse_string(self: Parser, input: []const u8, encoding: Encoding, old_tree: ?Tree) ParseFailure!Tree {
         const old_tree_ptr = if (old_tree) |_| old_tree.?.tree else null;
         return Tree.init(api.ts_parser_parse_string_encoding(self.parser, old_tree_ptr, input.ptr, @truncate(u32, input.len), @enumToInt(encoding)) orelse return ParseFailure.Cancelled);
+    }
+
+    test "Parsing strings" {
+        const tests = @import("tests.zig");
+        const language = tests.get_language();
+        const source = tests.example_source;
+
+        const parser = try Parser.init(language);
+        defer parser.deinit();
+
+        // Just check to see if the parsing process completes successfully
+        _ = try parser.parse_string(source, Encoding.UTF8, null);
     }
 };
