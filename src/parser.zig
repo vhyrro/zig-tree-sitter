@@ -40,6 +40,13 @@ pub const Parser = struct {
         }
     }
 
+    test "Parser initialization" {
+        const tests = @import("tests.zig");
+
+        const parser = try Parser.init(tests.get_language());
+        defer parser.deinit();
+    }
+    
     /// Instruct the parser to start the next parse from the beginning.
     ///
     /// If the parser previously failed because of a timeout or a cancellation, then
