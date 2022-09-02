@@ -21,7 +21,7 @@ pub const Cursor = struct {
     cursor: *const api.TSTreeCursor,
 
     fn init(start_node: Node) CursorInitError!Cursor {
-        if (start_node.null() or start_node.missing())
+        if (start_node.is_null() or start_node.missing())
             return CursorInitError.NodeIsNullOrMissing;
 
         return .{
@@ -41,11 +41,9 @@ pub const Cursor = struct {
 
     // TODO: Do we need to return an optional here?
     fn current_node(self: Cursor) ?Node {
-        const node = api.ts_tree_cursor_current_node(self.cursor);
+        const node = Node.from(api.ts_tree_cursor_current_node(self.cursor));
 
-        return if (node.null()) null or .{
-            .node = node,
-        };
+        return if (node.is_null()) null or node;
     }
 
     fn current_field(self: Cursor, language: Language) ?Field {
