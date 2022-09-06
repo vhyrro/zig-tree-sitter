@@ -4,6 +4,7 @@ pub fn build(b: *std.build.Builder) !void {
     const mode = b.standardReleaseOptions();
 
     const lib = b.addStaticLibrary("zig-tree-sitter", "src/lib.zig");
+    lib.use_stage1 = true;
     lib.setBuildMode(mode);
     lib.linkLibC();
     lib.addIncludeDir("tree-sitter/lib/src");
@@ -12,7 +13,6 @@ pub fn build(b: *std.build.Builder) !void {
     lib.install();
 
     var main_tests = b.addTest("src/tests.zig");
-    main_tests.use_stage1 = true;
     main_tests.linkLibrary(lib);
     main_tests.addIncludeDir("tree-sitter-json/src/");
     main_tests.addCSourceFile("tree-sitter-json/src/parser.c", &[_][]const u8 {});
