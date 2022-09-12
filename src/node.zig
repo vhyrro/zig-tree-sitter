@@ -1,9 +1,9 @@
 const api = @import("api/out.zig");
+const Point = @import("point.zig").Point;
 const Symbol = @import("symbol.zig").Symbol;
 const Language = @import("language.zig").Language;
 const Field = @import("field.zig").Field;
 
-pub const Point = api.TSPoint;
 pub const InputEdit = api.TSInputEdit;
 
 pub const Node = struct {
@@ -27,13 +27,17 @@ pub const Node = struct {
         return api.ts_node_start_byte(self.node);
     }
 
-    // fn start_point() Point {}
+    pub fn start_point(self: Node) Point {
+        return api.ts_node_start_point(self.node);
+    }
 
     pub fn end_byte(self: Node) u32 {
         return api.ts_node_end_byte(self.node);
     }
 
-    // fn end_point() Point {}
+    fn end_point(self: Node) Point {
+        return api.ts_node_end_point(self.node);
+    }
 
     pub fn sexp(self: Node) [*:0]const u8 {
         return api.ts_node_string(self.node);
