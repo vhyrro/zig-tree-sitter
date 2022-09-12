@@ -35,7 +35,7 @@ pub const Node = struct {
         return api.ts_node_end_byte(self.node);
     }
 
-    fn end_point(self: Node) Point {
+    pub fn end_point(self: Node) Point {
         return api.ts_node_end_point(self.node);
     }
 
