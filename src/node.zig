@@ -70,7 +70,7 @@ pub const Node = struct {
     pub fn parent(self: Node) ?Node {
         const node = api.ts_node_parent(self.node);
 
-        return if (!node.is_null()) node else null;
+        return if (node.is_null()) null else node;
     }
 
     pub fn child(self: Node, index: u32) ?Node {
