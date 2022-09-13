@@ -21,7 +21,7 @@ pub const Cursor = struct {
     cursor: *const api.TSTreeCursor,
 
     pub fn init(start_node: Node) CursorInitError!Cursor {
-        if (start_node.is_null() or start_node.missing())
+        if (start_node.is_null() or start_node.is_missing())
             return CursorInitError.NodeIsNullOrMissing;
 
         return .{
