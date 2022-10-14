@@ -28,6 +28,16 @@ pub fn get_language() lib.Language {
     return lib.Language.from(tree_sitter_json());
 }
 
+pub fn get_node() !lib.Node {
+    // Setup
+    const language = get_language();
+
+    const parser = try lib.Parser.init(language);
+    defer parser.deinit();
+
+    return (try parser.parse_string(example_source, lib.Encoding.UTF8, null)).root();
+}
+
 test "Ensure `tree-sitter-json` is properly linked" {
     try testing.expectEqual(get_language().version(), 13);
 }

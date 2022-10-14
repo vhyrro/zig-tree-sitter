@@ -11,6 +11,7 @@ pub fn build(b: *std.build.Builder) !void {
     lib.install();
 
     var main_tests = b.addTest(root ++ "/src/tests.zig");
+    main_tests.use_stage1 = true;
     main_tests.linkLibrary(lib);
     main_tests.addIncludeDir(root ++ "/tree-sitter-json/src");
     main_tests.addCSourceFile(root ++ "/tree-sitter-json/src/parser.c", &[_][]const u8 {});
