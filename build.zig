@@ -13,7 +13,7 @@ pub fn build(b: *std.build.Builder) !void {
     var main_tests = b.addTest(root ++ "/src/tests.zig");
     main_tests.use_stage1 = true;
     main_tests.linkLibrary(lib);
-    main_tests.addIncludeDir(root ++ "/tree-sitter-json/src");
+    main_tests.addIncludePath(root ++ "/tree-sitter-json/src");
     main_tests.addCSourceFile(root ++ "/tree-sitter-json/src/parser.c", &[_][]const u8 {});
     main_tests.setBuildMode(mode);
 
@@ -26,7 +26,7 @@ pub fn linkTreeSitter(exe: *std.build.LibExeObjStep) void {
     const root = comptime std.fs.path.dirname(@src().file) orelse ".";
 
     exe.linkLibC();
-    exe.addIncludeDir(root ++ "/tree-sitter/lib/src");
-    exe.addIncludeDir(root ++ "/tree-sitter/lib/include");
+    exe.addIncludePath(root ++ "/tree-sitter/lib/src");
+    exe.addIncludePath(root ++ "/tree-sitter/lib/include");
     exe.addCSourceFile(root ++ "/tree-sitter/lib/src/lib.c", &[_][]const u8 {});
 }
